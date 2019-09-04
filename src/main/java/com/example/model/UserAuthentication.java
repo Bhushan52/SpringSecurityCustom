@@ -1,7 +1,6 @@
 package com.example.model;
 
-import java.util.Collection;
-import java.util.stream.Collectors;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -14,17 +13,12 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
-
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 
 @Entity
 @Table(name = "user_authentication",uniqueConstraints=@UniqueConstraint(columnNames = "username"))
-public class UserAuthentication implements UserDetails {
-
-	private static final long serialVersionUID = 4417082587798881332L;
+public class UserAuthentication {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -39,6 +33,9 @@ public class UserAuthentication implements UserDetails {
 	
     private String lastName;
     
+    @Transient
+    private String passwordConfirm;
+    
     @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
     @JoinTable(
             name = "users_roles",
@@ -46,51 +43,7 @@ public class UserAuthentication implements UserDetails {
                     name = "user_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(
                     name = "role_id", referencedColumnName = "id"))
-    private Collection<Role> roles;
-    
-	@Override
-	public Collection<? extends GrantedAuthority> getAuthorities() {
-		return
-				roles.stream()
-                .map(role -> new SimpleGrantedAuthority(role.getName()))
-                .collect(Collectors.toList());
-	}
-
-	@Override
-	public String getPassword() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public String getUsername() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public boolean isAccountNonExpired() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean isAccountNonLocked() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean isCredentialsNonExpired() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean isEnabled() {
-		// TODO Auto-generated method stub
-		return false;
-	}
+    private Set<Role> roles;
 
 	public Long getId() {
 		return id;
@@ -100,12 +53,16 @@ public class UserAuthentication implements UserDetails {
 		this.id = id;
 	}
 
-	public static long getSerialversionuid() {
-		return serialVersionUID;
+	public String getUsername() {
+		return username;
 	}
 
 	public void setUsername(String username) {
 		this.username = username;
+	}
+
+	public String getPassword() {
+		return password;
 	}
 
 	public void setPassword(String password) {
@@ -128,12 +85,19 @@ public class UserAuthentication implements UserDetails {
 		this.lastName = lastName;
 	}
 
-	public Collection<Role> getRoles() {
+	public String getPasswordConfirm() {
+		return passwordConfirm;
+	}
+
+	public void setPasswordConfirm(String passwordConfirm) {
+		this.passwordConfirm = passwordConfirm;
+	}
+
+	public Set<Role> getRoles() {
 		return roles;
 	}
 
-	public void setRoles(Collection<Role> roles) {
+	public void setRoles(Set<Role> roles) {
 		this.roles = roles;
 	}
-	
 }

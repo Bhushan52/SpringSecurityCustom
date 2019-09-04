@@ -1,33 +1,12 @@
 package com.example.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.stereotype.Service;
+import org.springframework.security.core.userdetails.User;
 
-import com.example.repository.UserRepository;
+import com.example.model.UserAuthentication;
 
-@Service
-public class UserService implements /* IUserService,*/UserDetailsService{
+public interface UserService {
 
-	@Autowired
-	private UserRepository userRepository;
+	void save(UserAuthentication userAuthentication);
 
-	@Override
-	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-		UserDetails userDetails = userRepository.findByUserName(username);
-		if (userDetails == null) {
-			throw new UsernameNotFoundException(username);
-		}
-		return userDetails;
-	}
-
-	/*@Override
-	public void save(UserAuthentication user) {
-		if (this.loadUserByUsername(user.getUsername()) == null) {
-			userRepository.save(user);
-		}
-
-	}*/
+	UserAuthentication findByUsername(String username);
 }
