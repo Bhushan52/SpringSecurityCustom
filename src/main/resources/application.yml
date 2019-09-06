@@ -13,7 +13,7 @@ spring:
   jpa:
     show-sql: true
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
     database-platform: MYSQL
     properties:
       hibernate.dialect: org.hibernate.dialect.MySQL5Dialect
@@ -21,12 +21,9 @@ spring:
 # ===============================
 # = Logging configurations
 # ===============================
-logging:
-  level:
-    root: WARN
-    com.memorynotfound: DEBUG
-    org.springframework.web: INFO
-    org.springframework.security: INFO
-    
+logging:  level:
+    org.springframework : DEBUG
+    org.springframework.boot: info
+  
 server:  port: 8085
   
