@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
@@ -20,7 +21,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.model.UserAuthentication;
 import com.example.service.SecurityService;
-import com.example.service.SecurityServiceImpl;
 import com.example.service.UserService;
 
 @RestController
@@ -49,21 +49,29 @@ public class UserAuthenticationController {
 	    return new ResponseEntity<>("Hello, you!", HttpStatus.OK);
 	}
 	 
-	@GetMapping(value="/logout")
-	public String logoutPage (HttpServletRequest request, HttpServletResponse response) {
+	@GetMapping(value="/logout-custom")
+	public ResponseEntity<String> logoutPage (HttpServletRequest request, HttpServletResponse response) {
 	    Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 	    if (auth != null){    
 	        new SecurityContextLogoutHandler().logout(request, response, auth);
 	    }
-	    return "redirect:/login?logout";
+	    return new ResponseEntity<>("Successfully logged out!", HttpStatus.OK);
 	}
 	
 	
-	@GetMapping(value = "/api/to-do")
+	@PostMapping(value = "/api/to-do")
 	public ResponseEntity<String> todoPOST(@RequestParam("task")String task) {
 		
 		logger.info("todddodod:{}",task);
 	    return new ResponseEntity<>("Hello, you!", HttpStatus.OK);
 	}
+	
+	@PostMapping(value = "/admin/create-user")
+	public ResponseEntity<String> todoTest(@RequestParam("para")String task) {
+		
+		logger.info("todddodod:{}",task);
+	    return new ResponseEntity<>("Hello, you!", HttpStatus.OK);
+	}
 
+	
 }

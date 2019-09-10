@@ -11,7 +11,8 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.AuthenticationEntryPoint;
+import org.springframework.security.web.access.AccessDeniedHandler;
 
 @Configuration
 @EnableWebSecurity
@@ -19,6 +20,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Autowired
 	private UserDetailsService userDetailsService;
+	
+	@Autowired
+	private AuthenticationEntryPoint restAuthenticationEntryPoint;
+
+	@Autowired
+	private AccessDeniedHandler accessDeniedHandler;
 
 	@Bean
 	public BCryptPasswordEncoder bCryptPasswordEncoder() {
@@ -32,16 +39,18 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 		    .formLogin().disable()
 		    .httpBasic().disable()
 		    .authorizeRequests()
-		    .antMatchers("/login-custom","/registration").permitAll()
-		    .antMatchers("/api/**").authenticated()
-		    .antMatchers("/user/**").hasRole("ADMIN")
-	        .antMatchers("/admin/**").hasAnyRole("ADMIN", "USER")
+		    .antMatchers("/login-custom","/registration","/logout-custom").permitAll()
+		    .antMatchers("/api/to-do").authenticated()
+		    .antMatchers("/admin/**").hasRole("ADMIN")
+	        .antMatchers("/user/**").hasAnyRole("ADMIN", "USER")
 		    .and()
-		    .addFilter(new UsernamePasswordAuthenticationFilter())
 		    .sessionManagement()
-		    .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+		    .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
 		    .and()
-		    .logout();
+		    .exceptionHandling()
+		    .authenticationEntryPoint(restAuthenticationEntryPoint)
+		    .accessDeniedHandler(accessDeniedHandler)
+		    ;
 		}
 
 	@Bean
