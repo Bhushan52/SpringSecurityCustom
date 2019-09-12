@@ -40,7 +40,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 		    .httpBasic().disable()
 		    .authorizeRequests()
 		    .antMatchers("/login-custom","/registration","/logout-custom").permitAll()
-		    .antMatchers("/api/to-do").authenticated()
+		    .antMatchers("/api/**").authenticated()
 		    .antMatchers("/admin/**").hasRole("ADMIN")
 	        .antMatchers("/user/**").hasAnyRole("ADMIN", "USER")
 		    .and()
@@ -61,6 +61,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	@Autowired
 	public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
 		auth.userDetailsService(userDetailsService).passwordEncoder(bCryptPasswordEncoder());
+	}
+
+	@Override
+	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+		auth.eraseCredentials(true);
+		
+		super.configure(auth);
 	}
 
 }
