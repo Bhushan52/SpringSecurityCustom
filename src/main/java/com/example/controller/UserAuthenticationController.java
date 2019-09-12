@@ -9,7 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
@@ -33,7 +33,7 @@ public class UserAuthenticationController {
 	@Autowired
 	private SecurityService securityService;
 
-	@PostMapping(value= {"/registration"},consumes=MediaType.APPLICATION_JSON_UTF8_VALUE,produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
+	@PostMapping(value= "/registration",consumes=MediaType.APPLICATION_JSON_UTF8_VALUE,produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
 	public ResponseEntity<String> registrationPOST(@RequestBody UserAuthentication userAuthentication) {
 		userService.save(userAuthentication);
 
@@ -53,7 +53,10 @@ public class UserAuthenticationController {
 	public ResponseEntity<String> logoutPage (HttpServletRequest request, HttpServletResponse response) {
 	    Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 	    if (auth != null){    
-	        new SecurityContextLogoutHandler().logout(request, response, auth);
+	    SecurityContextLogoutHandler securityContext = new SecurityContextLogoutHandler();
+	    securityContext.logout(request, response, auth);
+	    securityContext.setClearAuthentication(true);
+	    securityContext.setInvalidateHttpSession(true);
 	    }
 	    return new ResponseEntity<>("Successfully logged out!", HttpStatus.OK);
 	}
@@ -72,6 +75,13 @@ public class UserAuthenticationController {
 		logger.info("todddodod:{}",task);
 	    return new ResponseEntity<>("Hello, you!", HttpStatus.OK);
 	}
+	
+	@Secured({"ROLE_ADMIN"})
+	@GetMapping(value = "/api/username")
+	public Authentication getMethodName(Authentication authenti) {
+		return authenti;
+	}
+
 
 	
 }
