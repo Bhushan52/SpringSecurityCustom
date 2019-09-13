@@ -38,9 +38,9 @@ public class ToDoController {
 	}
 	
 	@GetMapping(value = "/todo/{id}")
-	@ResponseStatus(code = HttpStatus.FOUND)
-	public ToDo getToDoById(@PathVariable("id") long id) throws ToDoException{
-    	logger.info("ToDo id to return " + id);
+	@ResponseStatus(code = HttpStatus.OK)
+	public ToDo getToDoById(@PathVariable("id") long id){
+    	logger.info("ToDo id to return {}", id);
     	ToDo toDo = toDoService.getToDoById(id);
     	if (toDo == null || toDo.getId() <= 0){
             throw new ToDoException("ToDo doesn´t exist");
@@ -49,30 +49,31 @@ public class ToDoController {
 	}
 
     @DeleteMapping(value = "/todo/{id}")
-	public ResponseEntity<Response> removeToDoById(@PathVariable("id") long id) throws ToDoException{
-    	logger.info("ToDo id to remove " + id);
+    @ResponseStatus(code = HttpStatus.OK)
+	public ResponseEntity<Response> removeToDoById(@PathVariable("id") long id){
+    	logger.info("ToDo id to remove {}", id);
     	ToDo toDo = toDoService.getToDoById(id);
     	if (toDo == null || toDo.getId() <= 0){
             throw new ToDoException("ToDo to delete doesn´t exist");
     	}
 		toDoService.removeToDo(toDo);
-		return new ResponseEntity<Response>(new Response(HttpStatus.OK.value(), "ToDo has been deleted"), HttpStatus.OK);
+		return new ResponseEntity<>(new Response(HttpStatus.OK.value(), "ToDo has been deleted"), HttpStatus.OK);
 	}
     
     @PostMapping(value = "/todo")
-   	public ResponseEntity<ToDo> saveToDo(@RequestBody ToDo payload) throws ToDoException{
-    	logger.info("Payload to save " + payload);
-		return new ResponseEntity<ToDo>(toDoService.saveToDo(payload), HttpStatus.OK);
+   	public ResponseEntity<ToDo> saveToDo(@RequestBody ToDo todo){
+    	logger.info("Payload to save {}", todo);
+		return new ResponseEntity<>(toDoService.saveToDo(todo), HttpStatus.OK);
    	}
     
     @PatchMapping(value = "/todo")
-   	public ResponseEntity<ToDo>  updateToDo(@RequestBody ToDo payload) throws ToDoException{
-    	logger.info("Payload to update " + payload);
+   	public ResponseEntity<ToDo>  updateToDo(@RequestBody ToDo payload){
+    	logger.info("Payload to update {}",payload);
     	ToDo toDo = toDoService.getToDoById(payload.getId());
     	if (toDo == null || toDo.getId() <= 0){
             throw new ToDoException("ToDo to update doesn´t exist");
     	}
-		return new ResponseEntity<ToDo>(toDoService.saveToDo(payload), HttpStatus.OK);
+		return new ResponseEntity<>(toDoService.saveToDo(payload), HttpStatus.OK);
    	}
 	
 }

@@ -1,6 +1,7 @@
 package com.example.service;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,7 +22,11 @@ public class ToDoServiceImpl implements ToDoService{
 
 	@Override
 	public ToDo getToDoById(long id) {
-		return toDoRepository.getOne(id);
+		Optional<ToDo> todo = toDoRepository.findById(id);
+		if(todo.isPresent()) {
+			return todo.get();
+		}
+		return null;
 	}
 
 	@Override

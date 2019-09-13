@@ -16,7 +16,7 @@ spring:
       ddl-auto: update
     database-platform: MYSQL
     properties:
-      hibernate.dialect: org.hibernate.dialect.MySQL5Dialect
+      hibernate.dialect: org.hibernate.dialect.MySQL5Dialect  batch:    job:      enabled: false
 
 # ===============================
 # = Logging configurations
@@ -26,4 +26,4 @@ logging:  level:
     org.springframework.boot: info
   
 server:  port: 8085
-  
+
